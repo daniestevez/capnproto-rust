@@ -509,6 +509,20 @@ const RUST_KEYWORDS: &[&str] = &[
 
 fn module_name(camel_case: &str) -> String {
     let mut name = camel_to_snake_case(camel_case);
+    // If the camel case name begins by lowercase, add an underscore to the
+    // beginning to potentially distinguish between something like
+    //
+    // struct FooBar
+    //
+    // and
+    //
+    // annotation fooBar
+    //
+    if let Some(c) = camel_case.chars().next() {
+        if c.is_lowercase() {
+            name.insert(0, '_');
+        }
+    }
     if RUST_KEYWORDS.contains(&&*name) {
         name.push('_');
     }
